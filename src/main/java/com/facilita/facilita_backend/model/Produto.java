@@ -5,6 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data 
 @Entity 
@@ -31,6 +32,7 @@ public class Produto {
     private LocalDate dataValidade;
     
     // o BD vai criar uma coluna "usuario_id" atrelando esse produto ao dono da conta.
+    @JsonIgnore 
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
