@@ -29,6 +29,19 @@ public class TokenService {
         }
     }
 
+    public String validarToken(String token){
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("facilita-api")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
     private Instant dataExpiracao(){
         return LocalDateTime.now().plusDays(30).toInstant(ZoneOffset.of("-03:00"));
     }
