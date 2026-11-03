@@ -6,6 +6,7 @@ import com.facilita.facilita_backend.repository.ProdutoRepository;
 import com.facilita.facilita_backend.repository.UsuarioRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +46,24 @@ public class ProdutoController {
         List<Produto> produtos = produtoRepository.findByUsuario(usuarioLogado);
 
         return ResponseEntity.ok(produtos);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletarProduto(@PathVariable UUID id) {
+        
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+
+        if (!produto.getUsuario().getId().equals(usuarioLogado.getId())) {
+            return ResponseEntity.status(403).body("Acesso negado. Este produto não pertence ao seu comércio.");
+        }
+
+        produtoRepository.delete(produto);
+
+        return ResponseEntity.ok("Produto excluído com sucesso!");
     }
 }
