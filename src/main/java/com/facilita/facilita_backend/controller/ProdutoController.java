@@ -7,6 +7,7 @@ import com.facilita.facilita_backend.repository.UsuarioRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,5 +66,29 @@ public class ProdutoController {
         produtoRepository.delete(produto);
 
         return ResponseEntity.ok("Produto excluído com sucesso!");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> atualizarProduto(@PathVariable UUID id, @RequestBody Produto produtoAtualizado) {
+        String emailUsuario = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuarioLogado = usuarioRepository.findByEmail(emailUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        Produto produtoExistente = produtoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+
+        if (!produtoExistente.getUsuario().getId().equals(usuarioLogado.getId())) {
+            return ResponseEntity.status(403).body("Acesso negado. Este produto não pertence ao seu comércio.");
+        }
+
+        produtoExistente.setPreco(produtoAtualizado.getPreco());
+        produtoExistente.setQuantidadeEstoque(produtoExistente.getQuantidadeEstoque() + produtoAtualizado.getQuantidadeEstoque());
+        if (produtoAtualizado.getDataValidade() != null) {
+            produtoExistente.setDataValidade(produtoAtualizado.getDataValidade());
+        }
+
+        produtoRepository.save(produtoExistente);
+
+        return ResponseEntity.ok("Produto atualizado com sucesso!");
     }
 }
