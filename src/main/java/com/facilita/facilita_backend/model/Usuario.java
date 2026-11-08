@@ -60,8 +60,8 @@ public class Usuario implements UserDetails{
 
     private String complemento;
 
-    @Column(name = "nome_comercio", nullable = false)
-    private String nomeComercio;
+    @Column(name = "nome_empresa")
+    private String nomeEmpresa;
 
     @Column(name = "chave_pix")
     private String chavePix;
