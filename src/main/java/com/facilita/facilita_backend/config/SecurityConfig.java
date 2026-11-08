@@ -52,7 +52,7 @@ public class SecurityConfig {
         // permite a origem do React
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:8443"));
         // permite os métodos necessarios
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         // libera o envio do Token JWT e do JSON
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type")); 
         
